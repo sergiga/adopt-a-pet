@@ -23,7 +23,7 @@ class AnimalList(APIView):
 
 class AnimalDetail(APIView):
     
-    def get (self, request, format=None, animal_id=None):
+    def get (self, request, animal_id, format=None):
         try:
             animal = Animal.objects.get(pk=animal_id)
         except Animal.DoesNotExist:
