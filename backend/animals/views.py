@@ -20,3 +20,13 @@ class AnimalList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AnimalDetail(APIView):
+    
+    def get (self, request, format=None, animal_id=None):
+        try:
+            animal = Animal.objects.get(pk=animal_id)
+        except Animal.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = AnimalSerializer(animal)
+        return Response(serializer.data)
