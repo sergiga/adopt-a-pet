@@ -7,10 +7,10 @@ from rest_framework import status
 from rest_framework import permissions
 
 class AnimalList(APIView):
-    permission_classes = (permissions.AllowAny,)
 
     def get(self, request, format=None):
-        animals = Animal.objects.all()
+        user = request.user
+        animals = Animal.objects.filter(owner=user)
         serializer = AnimalSerializer(animals, many=True)
         return Response(serializer.data)
 
