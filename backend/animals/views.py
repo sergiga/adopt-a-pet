@@ -30,3 +30,15 @@ class AnimalDetail(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = AnimalSerializer(animal)
         return Response(serializer.data)
+
+    def put (self, request, animal_id, format=None):
+        try:
+            animal = Animal.objects.get(pk=animal_id)
+        except Animal.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AnimalSerializer(animal, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
