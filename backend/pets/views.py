@@ -3,7 +3,8 @@ from django.http import Http404
 from pets.models import Pet
 from pets.models import Adoption
 from pets.serializers import (
-    PetSerializer, 
+    PetSerializer,
+    PetReadSerializer,
     AdoptionSerializer, 
     AdoptionReadSerializer,
 )
@@ -17,7 +18,7 @@ class PetList(APIView):
     def get(self, request, format=None):
         user = request.user
         pets = Pet.objects.filter(owner=user)
-        serializer = PetSerializer(pets, many=True)
+        serializer = PetReadSerializer(pets, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -37,7 +38,7 @@ class PetDetail(APIView):
 
     def get (self, request, pet_id, format=None):
         pet = self.get_object(pet_id)
-        serializer = PetSerializer(pet)
+        serializer = PetReadSerializer(pet)
         return Response(serializer.data)
 
     def put (self, request, pet_id, format=None):
