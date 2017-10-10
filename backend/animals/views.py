@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 from animals.models import Animal
 from animals.serializers import AnimalSerializer
 from rest_framework.views import APIView
@@ -23,22 +24,26 @@ class AnimalList(APIView):
 
 class AnimalDetail(APIView):
     
-    def get (self, request, animal_id, format=None):
+    def get_object(self, pk):
         try:
-            animal = Animal.objects.get(pk=animal_id)
+            return Animal.objects.get(pk=pk)
         except Animal.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise Http404
+
+    def get (self, request, animal_id, format=None):
+        animal = self.get_object(animal_id)
         serializer = AnimalSerializer(animal)
         return Response(serializer.data)
 
     def put (self, request, animal_id, format=None):
-        try:
-            animal = Animal.objects.get(pk=animal_id)
-        except Animal.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
+        animal = self.get_object(animal_id)
         serializer = AnimalSerializer(animal, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete (self, request, animal_id, format=None):
+        animal = self.get_object(animal_id)
+        animal.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
