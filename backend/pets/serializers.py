@@ -17,3 +17,12 @@ class PetSerializer(serializers.ModelSerializer):
         model = Pet
         fields = ('id', 'name', 'age', 'description', 
                   'in_adoption', 'owner', 'pet_type')
+
+class AdoptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Adoption
+        fields = ('id', 'animal', 'adopter')
+
+class AdoptionReadSerializer(AdoptionSerializer):
+    animal = PetSerializer(read_only=True)
+    adopter = UserSerializer(read_only=True)
