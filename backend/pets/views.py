@@ -12,12 +12,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+import json
 
 class PetList(APIView):
 
     def get(self, request, format=None):
         user = request.user
         pets = Pet.objects.filter(owner=user)
+        if request.GET.__contains__('in_adoption'):
+            in_adoption = json.loads(request.GET.get('in_adoption'))
+            pets = pets.filter(in_adoption=in_adoption)
         serializer = PetReadSerializer(pets, many=True)
         return Response(serializer.data)
 
