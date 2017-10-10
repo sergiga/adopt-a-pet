@@ -54,6 +54,13 @@ class PetDetail(APIView):
         pet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class AdoptionList(APIView):
+
+    def get (self, request, format=None, **kwargs):
+        adoptions = Adoption.objects.filter(**kwargs)
+        serializer = AdoptionReadSerializer(adoptions, many=True)
+        return Response(serializer.data)
+
 class AdoptionDetail(APIView):
 
     def get_object(self, pet_id, adopter_id):
@@ -77,3 +84,16 @@ class AdoptionDetail(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put (self, request, pet_id, adopter_id, format=None):
+        adoption = self.get_object(pet_id, adopter_id)
+        serializer = AdoptionSerializer(adoption, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete (self, request, pet_id, adopter_id, format=None):
+        adoption = self.get_object(pet_id, adopter_id)
+        adoption.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
