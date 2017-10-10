@@ -18,6 +18,6 @@ class Pet(models.Model):
         return '%s' % (self.name)
 
 class Adoption(models.Model):
-    animal = models.ForeignKey(Pet, related_name='adoptions')
+    pet = models.ForeignKey(Pet, related_name='adoptions')
     adopter = models.ForeignKey('auth.User', related_name='adoptions', null=True)
     updated_at = models.DateField(auto_now=True, auto_now_add=False)
