@@ -24,7 +24,7 @@ class PetReadSerializer(PetSerializer):
 class AdoptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Adoption
-        fields = ('id', 'pet', 'adopter')
+        fields = ('id', 'pet', 'adopter', 'updated_at')
 
 class AdoptionReadSerializer(AdoptionSerializer):
     pet = PetReadSerializer(read_only=True)
