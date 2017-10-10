@@ -19,5 +19,6 @@ from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     url(r'^auth/$', obtain_jwt_token),
-    url(r'^', include('pets.urls', namespace='pets')),
+    url(r'^', include('pets.urls.pets', namespace='pets')),
+    url(r'^', include('pets.urls.adoptions', namespace='adoptions')),
 ]
