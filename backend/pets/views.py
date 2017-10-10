@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from django.http import Http404
 from pets.models import Pet
-from pets.serializers import PetSerializer
+from pets.models import Adoption
+from pets.serializers import (
+    PetSerializer, 
+    AdoptionSerializer, 
+    AdoptionReadSerializer,
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -47,3 +52,27 @@ class PetDetail(APIView):
         pet = self.get_object(pet_id)
         pet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AdoptionDetail(APIView):
+
+    def get_object(self, pet_id, adopter_id):
+        try:
+            return Adoption.objects.get(
+                pet=pet_id, 
+                adopter=adopter_id
+            )
+        except Adoption.DoesNotExist:
+            raise Http404
+
+    def get (self, request, pet_id, adopter_id, format=None):
+        adoption = self.get_object(pet_id, adopter_id)
+        serializer = AdoptionReadSerializer(adoption)
+        return Response(serializer.data)
+
+    def post (self, request, pet_id, adopter_id, format=None):
+        adoption = { 'pet': pet_id, 'adopter': adopter_id }
+        serializer = AdoptionSerializer(data=adoption)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
