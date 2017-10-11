@@ -2,7 +2,6 @@ from rest_framework import serializers
 from pets.models.adoptions import Adoption
 from pets.serializers.pets import PetReadSerializer
 from pets.serializers.users import UserSerializer
-from django.contrib.auth.models import User
 
 class AdoptionSerializer(serializers.ModelSerializer):
     class Meta:
