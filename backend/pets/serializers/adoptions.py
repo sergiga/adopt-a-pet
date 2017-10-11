@@ -1,12 +1,17 @@
 from rest_framework import serializers
-from pets.models.adoptions import Adoption
+from pets.models.adoptions import Adoption, AdoptionStatus
 from pets.serializers.pets import PetReadSerializer
 from pets.serializers.users import UserSerializer
 
 class AdoptionSerializer(serializers.ModelSerializer):
+    status = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset = AdoptionStatus.objects.all(),
+    )
     class Meta:
         model = Adoption
-        fields = ('id', 'pet', 'adopter', 'updated_at')
+        fields = ('id', 'status', 'pet', 'adopter',
+                  'canceled_by_owner', 'canceled_by_adopter', 'updated_at')
 
 class AdoptionReadSerializer(AdoptionSerializer):
     pet = PetReadSerializer(read_only=True)
