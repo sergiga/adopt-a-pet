@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from pets.permissions.permissions import IsOwnerOrReadOnly
 import json
 
 class PetList(APIView):
@@ -31,11 +32,18 @@ class PetList(APIView):
 
 class PetDetail(APIView):
     
+    permission_classes = (
+        permissions.IsAuthenticated,
+        IsOwnerOrReadOnly,
+    )
+
     def get_object(self, pk):
         try:
-            return Pet.objects.get(pk=pk)
+            obj = Pet.objects.get(pk=pk)
         except Pet.DoesNotExist:
             raise Http404
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get (self, request, pet_id, format=None):
         pet = self.get_object(pet_id)
