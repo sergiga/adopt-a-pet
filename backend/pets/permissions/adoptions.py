@@ -6,4 +6,4 @@ class IsOwnerOrAdopter(permissions.BasePermission):
 
         if request.method in permissions.SAFE_METHODS:
             return True
-        return obj.owner == request.user or obj.adopter == request.user
+        return obj.pet.owner == request.user or obj.adopter == request.user

@@ -58,5 +58,5 @@ class AdoptionDetail(APIView):
 
     def delete (self, request, pet_id, adopter_id, format=None):
         adoption = self.get_object(pet_id, adopter_id)
-        adoption.delete()
+        adoption.safe_delete(request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
