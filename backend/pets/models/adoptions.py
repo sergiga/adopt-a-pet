@@ -16,6 +16,17 @@ class Adoption(models.Model):
     canceled_by_adopter = models.BooleanField(blank=False, default=False)
     updated_at = models.DateField(auto_now=True, auto_now_add=False)
 
+    def safe_delete(self, user):
+        if self.adopter == user:
+            self.canceled_by_adopter = True
+        elif self.pet.owner == user:
+            self.canceled_by_owner = True
+        if self.canceled_by_adopter and self.canceled_by_owner:
+            return self.delete()
+        else:
+            return self.save()
+
+    
 def update_adoptions(sender, **kwargs):
     instance = kwargs['instance']
     created = kwargs['created']
