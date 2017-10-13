@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from pets.permissions.adoptions import IsOwnerOrAdopter
 
 class AdoptionList(APIView):
 
@@ -18,15 +19,21 @@ class AdoptionList(APIView):
         return Response(serializer.data)
 
 class AdoptionDetail(APIView):
+    permission_classes = (
+        permissions.IsAuthenticated,
+        IsOwnerOrAdopter,
+    )
 
     def get_object(self, pet_id, adopter_id):
         try:
-            return Adoption.objects.get(
+            obj = Adoption.objects.get(
                 pet=pet_id, 
                 adopter=adopter_id
             )
         except Adoption.DoesNotExist:
             raise Http404
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get (self, request, pet_id, adopter_id, format=None):
         adoption = self.get_object(pet_id, adopter_id)
