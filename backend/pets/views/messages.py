@@ -10,14 +10,21 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from pets.permissions.adoptions import IsOwnerOrAdopter
 
 class MessageList(APIView):
+    permission_classes = (
+        permissions.IsAuthenticated,
+        IsOwnerOrAdopter,
+    )
 
     def get_adoption(self, id):
         try:
-            return Adoption.objects.get(pk=id)
+            obj = Adoption.objects.get(pk=id)
         except:
             raise Http404
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get (self, request, id, format=None):
         adoption = self.get_adoption(id)
